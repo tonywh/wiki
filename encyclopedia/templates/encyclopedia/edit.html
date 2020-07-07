@@ -1,0 +1,15 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    {{ title }} - edit
+{% endblock %}
+
+{% block body %}
+  <form action="/edit/{{ title }}" method="post">
+    {% csrf_token %}
+    <h1>Edit "{{ title }}"</h1>
+    <p>Type entry in <a href="https://guides.github.com/features/mastering-markdown/">Markdown</a> format.</p>
+    <textarea name="content" id="content" value="{{ content }}">{{ content }}</textarea><br>
+    <button type="submit">Save</button>
+  </form>
+{% endblock %}

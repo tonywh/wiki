@@ -42,15 +42,35 @@ def wiki(request, title):
     md = util.get_entry(title)
     if md == None:
         raise Http404("Topic does not exist.")        
-    #return HttpResponse(markdown2.markdown(md))
     return render(request, "encyclopedia/entry.html", {
-        "entry": markdown2.markdown(md)
+        "title": title,
+        "entry": markdown2.markdown(md),
     })
 
-def edit(request, title):
+def new(request):
     if request.method == "GET":
         # Get web page to edit an entry
-        pass
+        return render(request, "encyclopedia/new.html")
 
-    # Post edited page for storage and display
-    pass
+    # Posting to create a new (blank) topic, then edit it
+    title = request.POST.get("title")
+    if not title:
+        return HttpResponse("Title cannot be blank", status=400)
+    util.save_entry(title, "")
+    return HttpResponseRedirect(f"/edit/{title}")
+
+def edit(request, title):
+    md = util.get_entry(title)
+    if md == None:
+        raise Http404("Topic does not exist.")
+
+    if request.method == "GET":
+        # Get web page to edit an entry
+        return render(request, "encyclopedia/edit.html", {
+            "title": title,
+            "content": md,
+        })
+
+    # Posting edited page for storage and display
+    util.save_entry(title, request.POST.get("content"))
+    return HttpResponseRedirect(f"/wiki/{title}")
