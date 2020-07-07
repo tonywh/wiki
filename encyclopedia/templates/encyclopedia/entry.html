@@ -7,7 +7,5 @@
 {% block body %}
   {{ entry|safe }}
 
-  <form action="/edit/{{ title }}">
-    <button type="submit">Edit this page</button>
-  </form>
+  <a href="/edit/{{ title }}">Edit this page</a>
 {% endblock %}

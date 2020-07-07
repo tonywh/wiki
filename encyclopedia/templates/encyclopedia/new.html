@@ -9,6 +9,8 @@
     {% csrf_token %}
     <h1>Enter title for the new topic</h1>
     <input type="text" class="title-input" name="title" placeholder="Title"></input><br>
+    <p>Type entry in <a href="https://guides.github.com/features/mastering-markdown/">Markdown</a> format.</p>
+    <textarea name="content" id="content" value="{{ content }}">{{ content }}</textarea><br>
     <button type="submit">Create</button>
   </form>
 {% endblock %}

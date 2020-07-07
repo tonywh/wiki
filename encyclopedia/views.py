@@ -41,7 +41,7 @@ def wiki(request, title):
     # View a web page
     md = util.get_entry(title)
     if md == None:
-        raise Http404("Topic does not exist.")        
+        raise Http404(f'Topic "{title}" was not found.')        
     return render(request, "encyclopedia/entry.html", {
         "title": title,
         "entry": markdown2.markdown(md),
@@ -58,13 +58,13 @@ def new(request):
         return HttpResponse("Title cannot be blank", status=400)
     if util.get_entry(title) != None:
         return HttpResponse(f'"{title}" already exists', status=400)
-    util.save_entry(title, "")
-    return HttpResponseRedirect(f"/edit/{title}")
+    util.save_entry(title, request.POST.get("content"))
+    return HttpResponseRedirect(f"/wiki/{title}")
 
 def edit(request, title):
     md = util.get_entry(title)
     if md == None:
-        raise Http404("Topic does not exist.")
+        raise Http404(f'Topic "{title}" was not found.')
 
     if request.method == "GET":
         # Get web page to edit an entry
