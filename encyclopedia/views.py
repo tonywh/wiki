@@ -28,6 +28,7 @@ def search(request):
     # Check for part matches
     results = list(filter( lambda title: title.lower().find(q) >= 0, entries))
     return render(request, "encyclopedia/results.html", {
+        "query": q,
         "entries": results
     })
 
