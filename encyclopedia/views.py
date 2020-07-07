@@ -3,17 +3,18 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from . import util
 import markdown2
+from random import randrange
 
 def index(request):
-    q = request.GET.get("q")
-    if q:
-        return searchWiki(request, q)
-
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
     })
 
-def searchWiki(request, q):
+def search(request):
+    q = request.GET.get("q")
+    if not q:
+        raise Http404("Page not found")
+
     q = q.lower()
 
     # Get search result
@@ -25,21 +26,26 @@ def searchWiki(request, q):
         return HttpResponseRedirect(f"wiki/{results[0]}")
 
     # Check for part matches
-    results = filter( lambda title: title.lower().find(q) >= 0, entries)
+    results = list(filter( lambda title: title.lower().find(q) >= 0, entries))
     return render(request, "encyclopedia/results.html", {
-        "entries": list(results)
+        "entries": results
     })
 
 def random(request):
     # View random page
-    pass
+    entries =  util.list_entries()
+    i = randrange(len(entries))
+    return HttpResponseRedirect(f"wiki/{entries[i]}")
 
 def wiki(request, title):
     # View a web page
     md = util.get_entry(title)
     if md == None:
         raise Http404("Topic does not exist.")        
-    return HttpResponse(markdown2.markdown(md))
+    #return HttpResponse(markdown2.markdown(md))
+    return render(request, "encyclopedia/entry.html", {
+        "entry": markdown2.markdown(md)
+    })
 
 def edit(request, title):
     if request.method == "GET":
