@@ -56,6 +56,8 @@ def new(request):
     title = request.POST.get("title")
     if not title:
         return HttpResponse("Title cannot be blank", status=400)
+    if util.get_entry(title) != None:
+        return HttpResponse(f'"{title}" already exists', status=400)
     util.save_entry(title, "")
     return HttpResponseRedirect(f"/edit/{title}")
 
